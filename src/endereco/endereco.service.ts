@@ -9,8 +9,8 @@ export class EnderecoService {
 
     }
 
-    getEnderecos(){
-        
+    getEnderecos(bairro: String){
+
     }
 
 }
