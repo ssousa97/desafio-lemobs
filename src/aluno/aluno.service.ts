@@ -20,8 +20,7 @@ export class AlunoService {
     async criarAluno(aluno: Aluno, endereco : Endereco){
         try{
             if(! await this.alunoRepository.findOne({CPF : aluno.CPF})){
-
-                if(!this.validarCPF(aluno.CPF)) {
+                if(!this.validarCPF(aluno.CPF.toString())) {
                     console.log("CPF Inválido");
                     return false;
                 }
@@ -189,8 +188,8 @@ export class AlunoService {
     }
 
     validarCPF(CPF : string){
-               
-        CPF = CPF.toString();
+        
+
         let parteSemDigito = CPF.substring(0,9);
         let primeiroDigitoValidador = CPF.substring(9,10);
         let segundoDigitoValidador = CPF.substring(10,11);
