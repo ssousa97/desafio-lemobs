@@ -4,4 +4,5 @@ export class Aluno{
     dataNascimento: Date;
     CPF: string;
     nota: number;
+    
 }

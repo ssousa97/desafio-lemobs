@@ -18,5 +18,10 @@ export class EnderecoController {
         return await this.enderecoService.getEnderecos();
     }
 
+    @Get(':bairro')
+    async getEnderecoPorBairro(@Param('bairro') bairro : string){
+        return await this.enderecoService.getEnderecosPorBairro(bairro);
+    }
+
 
 }

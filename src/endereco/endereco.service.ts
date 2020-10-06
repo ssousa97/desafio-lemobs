@@ -12,12 +12,35 @@ export class EnderecoService {
         private enderecoRepository : Repository<EnderecoEntity>){}
 
     async createEndereco(endereco: Endereco){
+        try{
+            return await this.enderecoRepository.save(endereco);
+        }catch(e){
+            console.error(e);
+            return false;
+        }
         
-        return await this.enderecoRepository.save(endereco);
     }
 
     async getEnderecos(){
-        return await this.enderecoRepository.find();
+        try{
+            return await this.enderecoRepository.find();
+        }catch(e){
+            console.error(e);
+            return false;
+        }
+    }
+
+    async getEnderecosPorBairro(bairro : string){
+        try{
+            return await this.enderecoRepository
+            .createQueryBuilder('endereco_entity')
+            .where('bairro = :bairro',{bairro : bairro})
+            .getMany();
+        }catch(e){
+            console.error(e);
+            return false;
+        }
+
     }
 
 }

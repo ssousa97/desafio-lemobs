@@ -1,7 +1,7 @@
-## Desafio Lemobs 
+# Desafio Lemobs 
 
-Tarefas concluídas:
-- scripts de criação SQL [ToDo]
+## Tarefas concluídas:
+- scripts de criação SQL [ok]
 - conexões do banco com a API usando TypeORM [ok]
 - serviço POST /aluno para cadastro [ok]
 - serviço PUT /aluno/:id para editar [ok]
@@ -16,9 +16,9 @@ Tarefas concluídas:
 - retornar dados dos endereços formatados conforme o padrão pedido [ok]
 - versionar em github [ok]
 - checar se o aluno já existe no banco [ok]
-- validador de cpf [ToDo]
-- salvar cpf sem pontuação e retornar com pontuação [ToDo]
-- inserir filtro por bairro em /endereco (GET) [ToDo]
+- validador de cpf [ok]
+- salvar cpf sem pontuação e retornar com pontuação [ok]
+- inserir filtro por bairro em /endereco (GET) [ok]
 - usar typeORM [ok]
 - usar docker [ToDo]
 

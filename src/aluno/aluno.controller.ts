@@ -10,25 +10,25 @@ export class AlunoController {
 
     @Post()
     async criar(@Body() aluno : Aluno, @Body() endereco : Endereco) {
-        return this.alunoService.criarAluno(aluno, endereco);
+        return await this.alunoService.criarAluno(aluno, endereco);
     }
 
     @Put(':id')
     async atualizar(@Param('id') id : number, @Body() aluno : Aluno){
-        return this.alunoService.atualizarAluno(id, aluno);
+        return await this.alunoService.atualizarAluno(id, aluno);
     }
 
     @Get(':id')
     async getPorId(@Param('id') id : number){
         if(id.toString() === 'media'){
-            return this.alunoService.getAlunosPorMedia();
+            return await this.alunoService.getAlunosPorMedia();
         }
-        return this.alunoService.getAlunoPorId(id);    
+        return await this.alunoService.getAlunoPorId(id);    
     }
 
     @Get()
-    async getTodos():Promise<Aluno[]>{
-        return this.alunoService.getAlunos();
+    async getTodos(){
+        return await this.alunoService.getAlunos();
     }
 
     @Get(':id/endereco')
@@ -38,7 +38,7 @@ export class AlunoController {
 
     @Get('/:nota/criterio/:criterio')
     async getPorNota(@Param('nota') nota : number, @Param('criterio') criterio : string){      
-        return this.alunoService.getAlunosPorNota(nota, criterio);
+        return await this.alunoService.getAlunosPorNota(nota, criterio);
     }
 
 
