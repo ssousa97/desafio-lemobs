@@ -1,7 +1,7 @@
 export class Aluno{
     id: number;
-    nome : String;
+    nome : string;
     dataNascimento: Date;
-    CPF: String;
+    CPF: string;
     nota: number;
 }

@@ -1,10 +1,22 @@
-import { Param, Controller, Get } from '@nestjs/common';
+import { Param, Controller, Get, Post, Body } from '@nestjs/common';
+import { Endereco } from './endereco';
 import { EnderecoService } from './endereco.service';
 
 @Controller('endereco')
 export class EnderecoController {
 
     constructor(private enderecoService : EnderecoService){}
+
+
+    @Post()
+    async create(@Body() endereco : Endereco){
+        return await this.enderecoService.createEndereco(endereco);
+    }
+
+    @Get()
+    async getEndereco(){
+        return await this.enderecoService.getEnderecos();
+    }
 
 
 }

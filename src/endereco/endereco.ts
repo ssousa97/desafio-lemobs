@@ -1,8 +1,8 @@
 export class Endereco{
     id: number;
-    rua: String;
-    numero: String;
-    complemento: String;
-    bairro: String;
+    rua: string;
+    numero: string;
+    complemento: string;
+    bairro: string;
     alunoId: number;
 }

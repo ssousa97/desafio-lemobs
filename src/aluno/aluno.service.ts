@@ -1,82 +1,126 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
+import { Endereco } from 'src/endereco/endereco';
+import { EnderecoEntity } from 'src/endereco/endereco.entity';
+import { Repository } from 'typeorm';
 import { Aluno } from './aluno';
+import { AlunoEntity } from './aluno.entity';
 
 @Injectable()
 export class AlunoService {
 
-
-    alunos: Aluno[] = [
-        {id: 1,nome: 'Samuel1',dataNascimento: new Date(),CPF : '14963818741',nota : 9},
-        {id: 2,nome: 'Samuel2',dataNascimento: new Date(),CPF : '14963818742',nota : 3},
-        {id: 3,nome: 'Samuel3',dataNascimento: new Date(),CPF : '14963818743',nota : 1},
-        {id: 4,nome: 'Samuel4',dataNascimento: new Date(),CPF : '14963818744',nota : 10},
-        {id: 5,nome: 'Samuel5',dataNascimento: new Date(),CPF : '14963818754',nota : 2},
-        {id: 6,nome: 'Samuel6',dataNascimento: new Date(),CPF : '14963818764',nota : 6},
-        {id: 7,nome: 'Samuel7',dataNascimento: new Date(),CPF : '14963818774',nota : 7},
-        {id: 8,nome: 'Samuel8',dataNascimento: new Date(),CPF : '14963818784',nota : 8.5},
-        {id: 9,nome: 'Samuel9',dataNascimento: new Date(),CPF : '14963818794',nota : 7.7},
-        {id: 10,nome: 'Samuel10',dataNascimento: new Date(),CPF : '14963818704',nota : 5.4},
-        {id: 11,nome: 'Samuel11',dataNascimento: new Date(),CPF : '14963818144',nota : 3},
-        {id: 12,nome: 'Samuel12',dataNascimento: new Date(),CPF : '14963818244',nota : 7.6},
-        {id: 13,nome: 'Samuel13',dataNascimento: new Date(),CPF : '14963818344',nota : 6.4},
-        {id: 14,nome: 'Samuel14',dataNascimento: new Date(),CPF : '14963818444',nota : 10},
-        {id: 15,nome: 'Samuel15',dataNascimento: new Date(),CPF : '14963818544',nota : 5},
-        {id: 16,nome: 'Samuel16',dataNascimento: new Date(),CPF : '14963818644',nota : 8},
-
-    ];
+    constructor(
+        @InjectRepository(AlunoEntity)
+        private alunoRepository : Repository<AlunoEntity>,
+        @InjectRepository(EnderecoEntity)
+        private enderecoRepository : Repository<EnderecoEntity>){}
 
 
-    createAluno(aluno: Aluno){
+    async criarAluno(aluno: Aluno, endereco : Endereco){
+        try{
+            if(! await this.alunoRepository.findOne({CPF : aluno.CPF})){
 
+                let novoAluno = new AlunoEntity();
+                let novoEndereco = new EnderecoEntity();
         
-    }
-
-    updateAluno(id: number, aluno: Aluno){
-
-        let novoAluno = this.alunos.find(aluno => aluno.id == id);
-
-        if(novoAluno){
-
-            novoAluno.nome = aluno.nome;
-            novoAluno.CPF = aluno.CPF;
-            novoAluno.dataNascimento = aluno.dataNascimento;
-            novoAluno.nota = aluno.nota;
-
+                novoAluno.nome = aluno.nome;
+                novoAluno.CPF = aluno.CPF;
+                novoAluno.dataNascimento = new Date(aluno.dataNascimento);
+                novoAluno.nota = aluno.nota;
+        
+                await this.alunoRepository.save(novoAluno); 
+        
+                novoEndereco.bairro = endereco.bairro;
+                novoEndereco.complemento = endereco.complemento;
+                novoEndereco.numero = endereco.numero;
+                novoEndereco.rua = endereco.rua;
+                novoEndereco.aluno = novoAluno;
+        
+                await this.enderecoRepository.save(novoEndereco);
+    
+                return true;
+            }
+        }catch(e){
+            console.error(e);
+            return false;
         }
-        return novoAluno;
 
     }
 
-    getAlunoById(id: number){
-        return this.alunos.find(aluno => aluno.id == id);     
+    async atualizarAluno(id: number, aluno: Aluno){
+
+        let editarAluno = await this.alunoRepository.findOne({id : id});
+        if(editarAluno){
+            //check if its undefined, if it is, then do not change.
+            editarAluno.CPF = aluno.CPF ? aluno.CPF : editarAluno.CPF;
+            editarAluno.dataNascimento = aluno.dataNascimento ? aluno.dataNascimento : editarAluno.dataNascimento;
+            editarAluno.nome = aluno.nome ? aluno.nome : editarAluno.nome;
+            editarAluno.nota = aluno.nota ? aluno.nota : editarAluno.nota;
+
+            await this.alunoRepository.save(editarAluno);
+            return true;
+        }
+        return false;
+
     }
 
-    getAlunos(){
-        return this.alunos;
-
+    async getAlunoPorId(id: number){
+        return await this.alunoRepository.findOne({id : id});
     }
 
-    getAlunoEnderecos(id: number){
-        return 'Not Implemented';
+    async getAlunos(){
+        return await this.alunoRepository.find();  
     }
 
-    getAlunosByNota(nota: number, criterio : String){
-        if(criterio === '>')
-            return this.alunos.filter(x => x.nota > nota);   
-        return this.alunos.filter(x => x.nota < nota); 
-        
+    async getAlunoEnderecos(id: number){
+        let enderecos = this.enderecoRepository.findAndCount({
+            aluno : await this.alunoRepository.findOne({id : id})
+        });
+
+        let enderecosFormatados = enderecos[0].map(endereco => {
+            return {
+             endereço : `Rua ${endereco.rua}, ${endereco.numero} - ${endereco.complemento}`,
+             bairro : endereco.bairro
+            }
+        });
+
+        return {total : enderecos[1], endereços : enderecosFormatados};
     }
 
-    getAlunosByMedia(){
-        let soma = 0;
+    async getAlunosPorNota(nota: number, criterio : String){
+        if(criterio === '>'){
+            return await this.alunoRepository
+            .createQueryBuilder('aluno_entity')
+            .where('aluno_entity.nota > :nota',{nota : nota})
+            .getMany();
+        }else{
+            return await this.alunoRepository
+            .createQueryBuilder('aluno_entity')
+            .where('aluno_entity.nota < :nota',{nota : nota})
+            .getMany();
+        }           
+    }
 
-        for(let aluno of this.alunos){
-            soma += aluno.nota;
-        } 
+    async getAlunosPorMedia(){
 
-        let media = soma/this.alunos.length;
+        let alunos = await this.alunoRepository
+        .createQueryBuilder('aluno_entity')
+        .getManyAndCount();
 
-        return this.alunos.filter(x => x.nota > media);
+        let sum = 0;
+
+        for(const aluno of alunos[0])    {
+            sum += aluno.nota;    
+        }
+        let media = sum / alunos[1];
+
+
+        return await this.alunoRepository
+        .createQueryBuilder('aluno_entity')
+        .where('aluno_entity.nota > :media', {media : media})
+        .getMany();
+    
     }
 
 

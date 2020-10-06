@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import { Endereco } from 'src/endereco/endereco';
 import { Aluno } from './aluno';
 import { AlunoService } from './aluno.service';
 
@@ -8,36 +9,36 @@ export class AlunoController {
     constructor(private alunoService : AlunoService){}
 
     @Post()
-    async create(@Body() aluno : Aluno) : Promise<void> {
-        return this.alunoService.createAluno(aluno);
+    async criar(@Body() aluno : Aluno, @Body() endereco : Endereco) {
+        return this.alunoService.criarAluno(aluno, endereco);
     }
 
     @Put(':id')
-    async update(@Param('id') id : number, @Body() aluno : Aluno) : Promise<Aluno>{
-        return this.alunoService.updateAluno(id, aluno);
+    async atualizar(@Param('id') id : number, @Body() aluno : Aluno){
+        return this.alunoService.atualizarAluno(id, aluno);
     }
 
     @Get(':id')
-    async getById(@Param('id') id : number){
+    async getPorId(@Param('id') id : number){
         if(id.toString() === 'media'){
-            return this.alunoService.getAlunosByMedia();
+            return this.alunoService.getAlunosPorMedia();
         }
-        return this.alunoService.getAlunoById(id);    
+        return this.alunoService.getAlunoPorId(id);    
     }
 
     @Get()
-    async getAll():Promise<Aluno[]>{
+    async getTodos():Promise<Aluno[]>{
         return this.alunoService.getAlunos();
     }
 
     @Get(':id/endereco')
-    async getEndereco(@Param('id') id : number){
-        return this.alunoService.getAlunoEnderecos(id);
+    async getEnderecos(@Param('id') id : number){
+        return await this.alunoService.getAlunoEnderecos(id);
     }
 
-    @Get('/:id/criterio/:criterio')
-    async getByNota(@Param('id') nota : number, @Param('criterio') criterio : String): Promise<Aluno[]>{      
-        return this.alunoService.getAlunosByNota(nota, criterio);
+    @Get('/:nota/criterio/:criterio')
+    async getPorNota(@Param('nota') nota : number, @Param('criterio') criterio : string){      
+        return this.alunoService.getAlunosPorNota(nota, criterio);
     }
 
 
