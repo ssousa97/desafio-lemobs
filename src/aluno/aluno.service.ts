@@ -18,7 +18,7 @@ export class AlunoService {
         private enderecoRepository : Repository<EnderecoEntity>){}
 
     
-    async criarAluno(aluno: Aluno){
+    async criarAluno(aluno : Aluno){
         try{
             if(! await this.alunoRepository.findOne({CPF : aluno.CPF})){
                 if(!this.validarCPF(aluno.CPF.toString())) {
@@ -35,11 +35,11 @@ export class AlunoService {
                 novoAluno.nota = aluno.nota;
         
                 await this.alunoRepository.save(novoAluno); 
-        
-                novoEndereco.bairro = aluno.endereco.bairro;
-                novoEndereco.complemento = aluno.endereco.complemento;
-                novoEndereco.numero = aluno.endereco.numero;
-                novoEndereco.rua = aluno.endereco.rua;
+            
+                novoEndereco.bairro = aluno.bairro;
+                novoEndereco.complemento = aluno.complemento;
+                novoEndereco.numero = aluno.numero;
+                novoEndereco.rua = aluno.rua;
                 novoEndereco.aluno = novoAluno;
         
                 await this.enderecoRepository.save(novoEndereco);
@@ -58,7 +58,9 @@ export class AlunoService {
         try{
             let editarAluno = await this.alunoRepository.findOne({id : id});
             if(editarAluno){
+
                 //check if its undefined, if it is, then do not change.
+                
                 editarAluno.CPF = aluno.CPF ? aluno.CPF : editarAluno.CPF;
                 editarAluno.dataNascimento = aluno.dataNascimento ? aluno.dataNascimento : editarAluno.dataNascimento;
                 editarAluno.nome = aluno.nome ? aluno.nome : editarAluno.nome;
@@ -136,17 +138,15 @@ export class AlunoService {
 
     async getAlunosPorNota(nota: number, criterio : String){
         try{
-            if(criterio === '>'){
-                return await this.alunoRepository
-                .createQueryBuilder('aluno_entity')
-                .where('aluno_entity.nota > :nota',{nota : nota})
-                .getMany();
-            }else{
-                return await this.alunoRepository
-                .createQueryBuilder('aluno_entity')
-                .where('aluno_entity.nota < :nota',{nota : nota})
-                .getMany();
-            } 
+
+            let alunos = await this.alunoRepository
+            .createQueryBuilder('aluno_entity')
+            .where(`aluno_entity.nota ${criterio} :nota`,{nota : nota})
+            .getMany();
+
+            alunos.forEach(this.formatarCPF);
+            return alunos;
+
         }catch(e){
             console.error(e);
             return false;
@@ -158,22 +158,26 @@ export class AlunoService {
     async getAlunosPorMedia(){
         try{
 
-            let alunos = await this.alunoRepository
+            let qtdAlunos = await this.alunoRepository
             .createQueryBuilder('aluno_entity')
             .getManyAndCount();
     
             let sum = 0;
     
-            for(const aluno of alunos[0])    {
+            for(const aluno of qtdAlunos[0])    {
                 sum += aluno.nota;    
             }
-            let media = sum / alunos[1];
+            let media = sum / qtdAlunos[1];
     
     
-            return await this.alunoRepository
+            let alunos = await this.alunoRepository
             .createQueryBuilder('aluno_entity')
             .where('aluno_entity.nota > :media', {media : media})
             .getMany();
+            
+            alunos.forEach(this.formatarCPF);
+
+            return alunos;
 
         }catch(e){
 

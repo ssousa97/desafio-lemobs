@@ -17,6 +17,15 @@ export class Aluno{
     nota: number;
 
     @ApiProperty()
-    endereco : Endereco;
+    rua: string;
+
+    @ApiProperty()
+    numero: string;
+
+    @ApiProperty()
+    complemento: string;
+
+    @ApiProperty()
+    bairro: string;
     
 }

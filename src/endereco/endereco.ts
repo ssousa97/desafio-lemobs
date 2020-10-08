@@ -15,5 +15,6 @@ export class Endereco{
     @ApiProperty()
     bairro: string;
     
+    @ApiProperty()
     alunoId: number;
 }

@@ -1,0 +1,2 @@
+ docker run --name teste-postgres --network=desafio-network -e "POSTGRES_PASSWORD=root" -p 5432:5432 -v /home/mectravis/postgresql:/var/lib/postgresql/data -d postgres
+docker run --name teste-pgadmin --network=desafio-network -p 15432:80 -e "PGADMIN_DEFAULT_EMAIL=samuelsousa064@gmail.com" -e "PGADMIN_DEFAULT_PASSWORD=root" -d dpage/pgadmin4
