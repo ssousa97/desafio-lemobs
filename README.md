@@ -20,5 +20,5 @@
 - salvar cpf sem pontuação e retornar com pontuação [ok]
 - inserir filtro por bairro em /endereco (GET) [ok]
 - usar typeORM [ok]
-- usar docker [ToDo]
+- usar docker [ok]
 

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ApiOperation, ApiProperty, ApiResponse } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { connectableObservableDescriptor } from 'rxjs/internal/observable/ConnectableObservable';
 import { Endereco } from 'src/endereco/endereco';
@@ -16,8 +17,8 @@ export class AlunoService {
         @InjectRepository(EnderecoEntity)
         private enderecoRepository : Repository<EnderecoEntity>){}
 
-
-    async criarAluno(aluno: Aluno, endereco : Endereco){
+    
+    async criarAluno(aluno: Aluno){
         try{
             if(! await this.alunoRepository.findOne({CPF : aluno.CPF})){
                 if(!this.validarCPF(aluno.CPF.toString())) {
@@ -35,10 +36,10 @@ export class AlunoService {
         
                 await this.alunoRepository.save(novoAluno); 
         
-                novoEndereco.bairro = endereco.bairro;
-                novoEndereco.complemento = endereco.complemento;
-                novoEndereco.numero = endereco.numero;
-                novoEndereco.rua = endereco.rua;
+                novoEndereco.bairro = aluno.endereco.bairro;
+                novoEndereco.complemento = aluno.endereco.complemento;
+                novoEndereco.numero = aluno.endereco.numero;
+                novoEndereco.rua = aluno.endereco.rua;
                 novoEndereco.aluno = novoAluno;
         
                 await this.enderecoRepository.save(novoEndereco);
@@ -153,6 +154,7 @@ export class AlunoService {
           
     }
 
+    @ApiResponse({description : "Retorna os alunos cuja nota é maior que a média de todos os alunos"})
     async getAlunosPorMedia(){
         try{
 
@@ -181,7 +183,7 @@ export class AlunoService {
         }   
     }
 
-    formatarCPF(aluno : Aluno){
+    formatarCPF(aluno : AlunoEntity){
 
         aluno.CPF = `${aluno.CPF.substring(0,3)}.${aluno.CPF.substring(3,6)}.${aluno.CPF.substring(6,9)}-${aluno.CPF.substring(9,11)}`;
         
