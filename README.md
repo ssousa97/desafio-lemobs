@@ -1,7 +1,9 @@
 # Desafio Lemobs
 
-Para rodar, utilize o comando:
+Para rodar, utilize os comandos na raiz do projeto:
+
 	
+    npm install
     docker-compose up --build
 
 A documentação do swagger se encontra em:
