@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Endereco } from "src/endereco/endereco";
 
 export class Aluno{
     id: number;
@@ -7,10 +6,10 @@ export class Aluno{
     @ApiProperty()
     nome : string;
     
-    @ApiProperty()
+    @ApiProperty({example : "MM/DD/YYYY"})
     dataNascimento: Date;
     
-    @ApiProperty()
+    @ApiProperty({example : "11122233344"})
     CPF: string;
 
     @ApiProperty()

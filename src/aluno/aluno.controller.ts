@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiParam, ApiProperty, ApiResponse } from '@nestjs/swagger';
-import { Endereco } from 'src/endereco/endereco';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 import { Aluno } from './aluno';
 import { AlunoService } from './aluno.service';
 
@@ -47,6 +46,5 @@ export class AlunoController {
     async getPorNota(@Param('nota') nota : number, @Param('criterio') criterio : string){      
         return await this.alunoService.getAlunosPorNota(nota, criterio);
     }
-
 
 }

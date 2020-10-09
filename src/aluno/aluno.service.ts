@@ -22,8 +22,7 @@ export class AlunoService {
         try{
             if(! await this.alunoRepository.findOne({CPF : aluno.CPF})){
                 if(!this.validarCPF(aluno.CPF.toString())) {
-                    console.log("CPF Inválido");
-                    return false;
+                    return 'CPF Inválido';
                 }
 
                 let novoAluno = new AlunoEntity();
